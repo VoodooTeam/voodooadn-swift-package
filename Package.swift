@@ -8,7 +8,7 @@ let package = Package(
     products: [
         .library(
             name: Constants.voodooADNName,
-            targets: [Constants.voodooADNName]),
+            targets: [Constants.voodooADNName])
     ],
     targets: [
         .binaryTarget(
@@ -20,9 +20,8 @@ let package = Package(
 )
 
 enum Constants {
-    static var voodooADNURL: String { "https://voodoo-adn-framework-dev.s3.eu-west-1.amazonaws.com/iOS/Prod/2.3.43/VoodooAdn.zip" }
-    static var voodooADNChecksum: String {
-        "fb5308844ccf50caaa9e6f0d15cc499f9fe0da8f679191cb4c705c081bcf2227"
+    static var voodooADNURL: String { "https://voodoo-adn-framework-dev.s3.eu-west-1.amazonaws.com/iOS/Prod/9.9.9.9/VoodooAdn.zip"}
+    static var voodooADNChecksum: String {"89761e19dfef8cbb2a0eb73296f77c761b37e6cc1808519b73c3e1d2f9687f44"
     }
     static var voodooADNName: String { "VoodooAdn" }
 }

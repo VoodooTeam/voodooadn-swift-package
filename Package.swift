@@ -20,7 +20,7 @@ let package = Package(
 )
 
 enum Constants {
-    static var voodooADNURL: String { "https://voodoo-adn-framework.s3.eu-west-1.amazonaws.com/iOS/Prod/2.3.48/VoodooAdn.zip"}
-    static var voodooADNChecksum: String { "8693b992df23f6086bc36acc24c3b0bebdf29e3e17d441ceb472cd8b551f626f" }
+    static var voodooADNURL: String { "https://voodoo-adn-framework.s3.eu-west-1.amazonaws.com/iOS/Prod/2.3.50/VoodooAdn.zip"}
+    static var voodooADNChecksum: String { "485b01899d0057d0538999a112d3cfdf63d8115ecf76f9c6c8f8cb1fd6929551" }
     static var voodooADNName: String { "VoodooAdn" }
 }

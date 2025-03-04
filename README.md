@@ -32,6 +32,28 @@ Construct your ad view by fetching elements from NativeAdUnit using api:
 ```swift
 struct AdView: View {
     let ad: VoodooAdn.AdnSdk.NativeAdUnit
+    
+    init(adUnit: VoodooAdn.AdnSdk.NativeAdUnit) {
+        self.ad = adUnit
+        ad.observeShowEvents() { event in 
+             switch event {
+                case .click:
+                    //respond to click
+        
+                case .dismissed:
+                    //respond to dismiss
+                case .failure(let error):
+                    //respond to error
+        
+                case .rewarded:
+                    //respond to reward
+        
+                case .started:
+                    // respond to start
+             }
+        }
+    }
+    
     var body: some View {
         VStack {
             ad.getView(of: .title)?

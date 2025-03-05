@@ -6,25 +6,35 @@ Available with two apis:
 
 ## Initialization of SDK
 ```swift
-  VoodooAdn.AdnSdk.initialize(.init(mediationName: "")) { result in
+  VoodooAdn.AdnSdk.initialize() { result in
           switch result {
           case .success: // you can load an ad
           case .failure: 
           }
       }
  ```
+With await/async api
+```swift
+  try await VoodooAdn.AdnSdk.initialize()
+ ```
+
 ## NativeAds
 ### Load
 1. Load a native ad
 2. Save the object for later usage (retrieve ui components)
 ```swift
-   VoodooAdn.AdnSdk.loadNativeAd(.native(markup: "")) { result in
+   VoodooAdn.AdnSdk.loadNativeAd() { result in
           switch result {
           case let .success(ad):
               nativeAd = ad
           case .failure
           }
       }
+ ```
+
+Using await/async api
+```swift
+  self.nativeAd = try await VoodooAdn.AdnSdk.loadNativeAd()
  ```
 ### Show
 Construct your ad view by fetching elements from NativeAdUnit using api:
@@ -103,11 +113,54 @@ struct AdView: View {
         case privacy
     }
 ```
+- #### Access ad info
+  - aspect ratio (ad.aspectRatio)
+  - price (ad.price)
+```swift
+struct AdView: View {
+    let ad: VoodooAdn.AdnSdk.NativeAdUnit
+    
+    init(adUnit: VoodooAdn.AdnSdk.NativeAdUnit) {
+        self.ad = adUnit
+        ad.observeShowEvents() { event in 
+             switch event {
+                case .click:
+                    //respond to click
+        
+                case .dismissed:
+                    //respond to dismiss
+                case .failure(let error):
+                    //respond to error
+        
+                case .rewarded:
+                    //respond to reward
+        
+                case .started:
+                    // respond to start
+             }
+        }
+    }
+    
+    var body: some View {
+        VStack {
+            ad.getView(of: .title)?
+                .foregroundColor(.red)
+                .font(.headline)
+            ad.getView(of: .mainVideo) ??  ad.getView(of: .mainVideo).aspectRatio(ad.aspectRatio, contentMode: .fit) // use provided ratio
+            ad.getView(of: .cta)?
+                .foregroundColor(.red)
+                .font(.headline)
+            Text("Price: \(ad.price ?? 0)")
+             
+        }
+    }
+}
+```
 
 ## Fullscreen Ads
 ### Load
 ```swift
-    VoodooAdn.AdnSdk.loadFullScreenAd(.init(placement: "rewarded")) { result in
+    VoodooAdn.AdnSdk.loadFullScreenAd(.interstitial) { result in
           switch result { result
           case .success(let ad): // you can load an ad
               adUnit = ad
@@ -116,6 +169,12 @@ struct AdView: View {
           }
       }
 ```
+With await/async
+
+```swift
+    let ad = try await VoodooAdn.AdnSdk.loadFullScreenAd(.rewarded)
+```
+
 ### Show
 ```swift
     adUnit?.show(with: .init(viewController: viewControllerOrTopViewController)) {[weak self] event 
@@ -142,16 +201,26 @@ struct AdView: View {
 ```
 
 ## Privacy
+Note that all consent settings should be done 
+- before load of an ad if SDK is used as standalone 
+- before init if SDK is used as a part of mediation
+
 - ### GDPR consent:
 ```swift
     AdnSdk.setUserGDPRConsent(true/false)
 ```
 - ### CCPA/DoNotSell consent:
+To make this flag work GDPR consent needs to be set to true 
+
 ```swift
+    AdnSdk.setUserGDPRConsent(true)
     AdnSdk.setDoNotSell(true/false)
 ```
 
 ## Extra Information
+Note that setting user info should be done
+- before load of an ad if SDK is used as standalone
+- before init if SDK is used as a part of mediation
 
 ```swift
 AdnSdk.setUserInfo([

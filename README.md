@@ -233,7 +233,7 @@ AdnSdk.setUserInfo([
 
 ## Mediated and Self-mediated integration
 
-# Expected ad markup
+### Expected ad markup
 ```json
 {
     "price": 0.099, // mandatory

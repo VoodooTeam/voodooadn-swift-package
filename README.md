@@ -230,3 +230,29 @@ AdnSdk.setUserInfo([
          AdnSdk.LastAdIndex: 10
       ])
 ```
+
+## Mediated and Self-mediated integration
+
+# Expected ad markup
+```json
+{
+    "price": 0.099, // mandatory
+    "id": "23561EBE19900020A02D4BE", 
+    "bi": "9f612e6ce6fca6c9d6996cb7396b470b56d0c482",
+    "crid": "5ed5b014-cba6-49f2-840d-351c281f613f",
+    "adm": "{\"native\":{\"ver\":\"1.2\",\"...}" // mandatory
+}
+```
+
+Load and savet the object for later usage (retrieve ui components) using markup
+
+```swift
+   let myAdMarkup = // admarkup of the expected format
+   VoodooAdn.AdnSdk.loadNativeAd(.native(markup: myAdMarkup)) { result in
+          switch result {
+          case let .success(ad):
+              nativeAd = ad
+          case .failure
+          }
+      }
+ ```

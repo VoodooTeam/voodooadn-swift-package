@@ -55,8 +55,8 @@ struct AdView: View {
                 case .failure(let error):
                     //respond to error
         
-                case .rewarded:
-                    //respond to reward
+                case .impression:
+                    //respond to impression event
         
                 case .started:
                     // respond to start
@@ -132,8 +132,8 @@ struct AdView: View {
                 case .failure(let error):
                     //respond to error
         
-                case .rewarded:
-                    //respond to reward
+                case .impression:
+                    //respond to impression event
         
                 case .started:
                     // respond to start
@@ -192,6 +192,9 @@ With await/async
     
             case .rewarded:
                 //respond to reward
+
+            case .impression:
+                //respond to impression
     
             case .started:
                 // respond to start

@@ -8,7 +8,10 @@ let package = Package(
     products: [
         .library(
             name: Constants.voodooADNName,
-            targets: [Constants.voodooADNName])
+            targets: [Constants.voodooADNName]),
+	.library(
+            name: Constants.OMSDKVoodooName,
+            targets: [Constants.OMSDKVoodooName])
     ],
     targets: [
         .binaryTarget(

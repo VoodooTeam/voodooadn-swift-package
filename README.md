@@ -152,27 +152,27 @@ struct AdView: View {
 }
 ```
 
-### Observe User Interaction Events
+### Observe Delegated Actions
 
-You can attach an observer to receive user interaction events on the native ad, such as when a URL should be opened. This is useful if you want to handle ad interactions in a custom way (for example, opening links in an in-app browser, tracking user actions, or blocking navigation).
+You can attach an observer to receive delegated actions for the native ad, such as when a URL should be opened. This is useful if you want to handle ad interactions in a custom way (for example, opening links in an in-app browser, tracking user actions, or blocking navigation).
 
 #### Usage Example
 
 ```swift
-ad.observeInteractionEvents { event in
-    switch event {
-    case .openUrl(let url):
-        // Open the URL or perform a custom action
-        UIApplication.shared.open(url)
+ad.observeDelegatedActions { action in
+    switch action {
+    case .openInAppBrowser(let configuration):
+        // Open the URL in an in-app browser or perform a custom action
+        UIApplication.shared.open(configuration.launchUrl)
     }
 }
 ```
 
-#### About `observeInteractionEvents`
-- This method allows you to listen for user actions triggered by the ad, such as clicks that require opening a URL.
-- The closure receives an `AdNativeInteractionEvent` value. Currently, the main event is `.openUrl(URL)`, but more events may be added in the future.
+#### About `observeDelegatedActions`
+- This method allows you to listen for actions delegated to your app, such as opening URLs.
+- The closure receives an `AdNativeDelegatedAction` value. Currently, the main action is `.openInAppBrowser(InAppBrowserConfiguration)`, but more actions may be added in the future.
 - You can use this to:
-  - Open URLs in your own way (e.g., SFSafariViewController, custom webview, or external browser)
+  - Open URLs in an in-app browser (SFSafariViewController, custom webview, etc.)
   - Track user interactions for analytics
   - Block or filter navigation based on the URL
 
@@ -181,16 +181,18 @@ ad.observeInteractionEvents { event in
 ```swift
 import SafariServices
 
-ad.observeInteractionEvents { event in
-    switch event {
-    case .openUrl(let url):
-        let safariVC = SFSafariViewController(url: url)
+ad.observeDelegatedActions { action in
+    switch action {
+    case .openInAppBrowser(let configuration):
+        let safariVC = SFSafariViewController(url: configuration.launchUrl)
         // Present safariVC from your view controller
     }
 }
 ```
 
-> **Note:** If you do not attach an observer, calling the `click()` method will have no effect, as the SDK no longer handles click actions internally. You must handle user interactions yourself via the `observeInteractionEvents` method.
+> **Note:** The SDK can handle ad interactions in two ways depending on the ad configuration:
+> - **SDK-managed**: The SDK handles clicks internally using the default iOS browser
+> - **Delegated**: The SDK delegates the action to your app via `observeDelegatedActions` for custom handling (e.g., in-app browser, analytics tracking)
 
 - #### Elements Ids
 
@@ -364,20 +366,41 @@ The SDK provides an embedded browser component you can use to open URLs inside y
 
 ### Creating an Instance
 
-To create an `InAppBrowser`, use the following method:
+The `InAppBrowserConfiguration` is provided by the SDK through the `observeDelegatedActions` callback. You cannot create your own `InAppBrowserConfiguration` - you must use the one provided by the SDK.
+
+#### Usage in Delegated Actions
 
 ```swift
-let browser = VoodooAdn.AdnSdk.createInAppBrowser()
+ad.observeDelegatedActions { action in
+    switch action {
+    case .openInAppBrowser(let configuration):
+        // Create browser with the provided configuration
+        let browser = VoodooAdn.AdnSdk.createInAppBrowser(configuration: configuration)
+        // Use the browser...
+    }
+}
 ```
 
-This returns an instance conforming to the `InAppBrowser` protocol.
+### Creating an InAppBrowser
+
+To create an `InAppBrowser` instance, use the following method:
+
+```swift
+let browser = VoodooAdn.AdnSdk.createInAppBrowser(configuration: configuration)
+```
+
+**Parameters:**
+- `configuration`: An `InAppBrowserConfiguration` provided by the SDK through delegated actions.
+
+**Returns:**
+- An `InAppBrowser` instance conforming to the `InAppBrowser` protocol.
 
 ### API Overview
 
 The `InAppBrowser` protocol defines the following interface:
 
 - **view**: A SwiftUI view (`AnyView`) that renders the browser content.
-- **load(url:)**: Starts loading the specified URL.
+- **load()**: Starts loading the configured URL.
 - **stopLoading()**: Cancels any current page load.
 - **reload()**: Reloads the current page.
 - **goBack()**: Navigates to the previous page.
@@ -396,24 +419,34 @@ The `InAppBrowser` protocol defines the following interface:
 ### Example
 
 ```swift
-struct MyBrowserView: View {
-    @State private var browser = VoodooAdn.AdnSdk.createInAppBrowser()
-    let url: URL
-
+struct MyAdView: View {
+    let ad: VoodooAdn.AdnSdk.NativeAdUnit
+    
     var body: some View {
-        browser.view
-            .onAppear {
-                browser.load(url: url)
-
-                browser.observeNavigationState { state in
-                    print("canGoBack: \(state.canGoBack), canGoForward: \(state.canGoForward)")
-                }
-
-                browser.observeLoadingState { state in
-                    print("Loading state: \(state)")
+        // Your ad view content
+        VStack {
+            ad.getView(of: .title)
+            ad.getView(of: .mainImage)
+            ad.getView(of: .cta)
+        }
+        .onAppear {
+            ad.observeDelegatedActions { action in
+                switch action {
+                case .openInAppBrowser(let configuration):
+                    let browser = VoodooAdn.AdnSdk.createInAppBrowser(configuration: configuration)
+                    
+                    browser.load()
+                    
+                    browser.observeNavigationState { state in
+                        print("canGoBack: \(state.canGoBack), canGoForward: \(state.canGoForward)")
+                    }
+                    
+                    browser.observeLoadingState { state in
+                        print("Loading state: \(state)")
+                    }
                 }
             }
+        }
     }
 }
 ```
-

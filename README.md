@@ -383,17 +383,37 @@ ad.observeDelegatedActions { action in
 
 ### Creating an InAppBrowser
 
-To create an `InAppBrowser` instance, use the following method:
+You can create an `InAppBrowser` in two ways:
 
+- From a configuration provided by delegated actions (recommended):
 ```swift
 let browser = VoodooAdn.AdnSdk.createInAppBrowser(configuration: configuration)
 ```
 
-**Parameters:**
+- Directly from a plain URL (the SDK will build an internal configuration):
+```swift
+let browserFromUrl = VoodooAdn.AdnSdk.createInAppBrowser(url: URL(string: "https://example.com")!)
+```
+
+**Parameters for `createInAppBrowser(configuration:)`:**
 - `configuration`: An `InAppBrowserConfiguration` provided by the SDK through delegated actions.
 
-**Returns:**
-- An `InAppBrowser` instance conforming to the `InAppBrowser` protocol.
+**Parameters for `createInAppBrowser(url:)`:**
+- `url`: A plain `URL` to load. The SDK will create an internal configuration.
+
+Example:
+```swift
+let browser = VoodooAdn.AdnSdk.createInAppBrowser(url: URL(string: "https://example.com")!)
+browser.load()
+
+browser.observeNavigationState { state in
+    print("canGoBack: \(state.canGoBack), canGoForward: \(state.canGoForward)")
+}
+
+browser.observeLoadingState { state in
+    print("Loading state: \(state)")
+}
+```
 
 ### API Overview
 

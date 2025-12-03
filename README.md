@@ -279,6 +279,58 @@ struct AdView: View {
 }
 ```
 
+### OMID Friendly Obstruction Views
+
+This section details how to manage **Friendly Obstruction Views** according to the Open Measurement Interface Definition (OMID) standard. Friendly obstructions are UI elements deliberately placed over an ad that are considered non-intrusive (e.g., a "Close" button, a progress bar, or branding) and should **not** count as viewability obstruction.
+
+The following methods must be called on the **main thread** using the `@MainActor` context to ensure thread-safe UI manipulation and OMID reporting.
+
+#### Methods for Managing Obstructions
+
+```swift
+// Registers a specific `UIView` as a friendly obstruction for OMID measurement, categorized by its type.
+@MainActor
+func add(friendlyObstructionView: UIView, of type: AdFriendlyObstructionType) throws
+
+// Unregisters a previously declared friendly obstruction view.
+@MainActor
+func remove(friendlyObstructionView: UIView) throws
+
+// Unregisters all views currently declared as friendly obstructions for the active OMID session.
+@MainActor
+func removeAllFriendlyObstructions() throws
+```
+
+#### Example
+
+The following example shows how to register and unregister views on a native ad unit (`VoodooAdn.AdnSdk.NativeAdUnit`):
+
+```swift
+let friendlyView: UIView = // ... your UI element (e.g., a custom logo view)
+let ad: VoodooAdn.AdnSdk.NativeAdUnit // The ad unit instance
+
+// To declare a friendly obstruction view, categorizing it as 'other':
+do {
+    try ad.add(friendlyObstructionView: friendlyView, of: .other)
+} catch {
+    print("Failed to add friendly obstruction: \(error)")
+}
+
+// To remove a previously declared friendly obstruction view:
+do {
+    try ad.remove(friendlyObstructionView: friendlyView)
+} catch {
+    print("Failed to remove friendly obstruction: \(error)")
+}
+
+// Or to remove all declared friendly obstruction views at once:
+do {
+    try ad.removeAllFriendlyObstructions()
+} catch {
+    print("Failed to remove all friendly obstructions: \(error)")
+}
+```
+
 ## Fullscreen Ads
 
 ### Load

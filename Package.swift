@@ -28,10 +28,10 @@ let package = Package(
 )
 
 enum Constants {
-    static var voodooADNURL: String { "https://framework.voodoo-adn.com/iOS/sdk/3.14.3/VoodooAdn.zip"}
-    static var voodooADNChecksum: String { "38d7d41da3fb989f224968b117ca1e1d26f10e5f893c48bd5e4c3a4ef4901488" }
+    static var voodooADNURL: String { "https://framework.voodoo-adn.com/iOS/sdk/3.11.6/VoodooAdn.zip"}
+    static var voodooADNChecksum: String { "d6c5a627a81b1ff131fc134ea88dae26ace9835f8c4282f1a53607f29ddc8ace" }
     static var voodooADNName: String { "VoodooAdn" }
-    static var OMSDKVoodooURL: String { "https://framework.voodoo-adn.com/omsdk/ios/1.5.2/OMSDK_Voodooio.zip"}
-    static var OMSDKVoodooChecksum: String { "97914ad08803ee58d564d182b515b62250e0edd6f1d8360060603040ae39ad59" }
+    static var OMSDKVoodooURL: String { "https://framework.voodoo-adn.com/omsdk/ios/1.6.1/OMSDK_Voodooio.zip"}
+    static var OMSDKVoodooChecksum: String { "5a6b2c676db6ee8cc9d7afc320bc16a10268c65bf27987ab2c60dd4fbc5a141e" }
     static var OMSDKVoodooName: String { "OMSDK_Voodooio" }
 }

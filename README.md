@@ -1,12 +1,20 @@
 # VoodooAdnSDK
 
 Facilitate loading/showing fullscreen and native ads.
+
 Available with two apis:
 - Completion handlers/closures
 - Await/async
 
 ## Initialization of SDK
 
+### Initialize
+
+The SDK must be initialized prior to loading any ad. Ads can only be loaded after a successful call to the `initialize` method.
+
+#### Example
+
+* With completion handler
 ```swift
 VoodooAdn.AdnSdk.initialize() { result in
     switch result {
@@ -19,9 +27,33 @@ VoodooAdn.AdnSdk.initialize() { result in
 }
 ```
 
-With await/async api
+* With await/async api
 ```swift
 try await VoodooAdn.AdnSdk.initialize()
+```
+
+### Sound setting
+
+Ad sound is enabled by default. If you wish to initially mute the ads, you must configure the mute setting within the `initialize` method.
+
+#### Example
+
+* With completion handler
+```swift
+VoodooAdn.AdnSdk.initialize(options: .isMutedInitially) { result in
+    switch result {
+    case .success:
+        // you can load an ad
+
+    case .failure:
+        // an error occured
+    }
+}
+```
+
+* With await/async api
+```swift
+try await AdnSdk.initialize(options: .isMutedInitially)
 ```
 
 ## NativeAds
@@ -377,26 +409,6 @@ adUnit?.show(with: .init(viewController: viewControllerOrTopViewController)) {[w
 }
 ```
 
-## Privacy
-
-Note that all consent settings should be done 
-- before load of an ad if SDK is used as standalone 
-- before init if SDK is used as a part of mediation
-
-- ### GDPR consent
-
-```swift
-AdnSdk.setUserGDPRConsent(true/false)
-```
-- ### CCPA/DoNotSell consent
-
-To make this flag work GDPR consent needs to be set to true 
-
-```swift
-AdnSdk.setUserGDPRConsent(true)
-AdnSdk.setDoNotSell(true/false)
-```
-
 ## Extra Information
 
 Note that adding extra inforamtions should be done
@@ -521,4 +533,24 @@ struct MyAdView: View {
         }
     }
 }
+```
+
+## Deprecated methods
+
+The following methods are deprecated and will be removed in the future.
+
+```swift
+AdnSdk.setUserGDPRConsent(true/false)
+```
+
+```swift
+AdnSdk.setDoNotSell(true/false)
+```
+
+```swift
+AdnSdk.setUserInfo(infos)
+```
+
+```swift
+AdnSdk.initializeSDK(options)
 ```
